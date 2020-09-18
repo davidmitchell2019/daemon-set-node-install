@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: entrypoint
+  labels:
+    app: default-init
+data:
+  entrypoint.sh: |
+    #!/usr/bin/env bash
+    set -euo pipefail
+    DEBIAN_FRONTEND=noninteractive
+    ROOT_MOUNT_DIR="${ROOT_MOUNT_DIR:-/root}"
+    apt-get install curl -y
+    curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.19.0/bin/linux/amd64/kubectl
+    chmod +x ./kubectl
+    cp ./kubectl /root
+    kubectl version --client
+    # We use chroot to run the following commands in the host root (mounted as the /root volume in the container)
+    chroot "${ROOT_MOUNT_DIR}" mv /kubectl /usr/local/bin/kubectl
+    chroot "${ROOT_MOUNT_DIR}" kubectl version --client
