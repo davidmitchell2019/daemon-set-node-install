@@ -10,11 +10,15 @@ data:
     set -euo pipefail
     DEBIAN_FRONTEND=noninteractive
     ROOT_MOUNT_DIR="${ROOT_MOUNT_DIR:-/root}"
-    wget crowdstrike.deb from nexus
-    mv crowdstrike.deb /root
+    apt-get update -y
+    apt-get install wget -y
+    wget --no-check-certificate https://nexus.lseg.stockex.local/repository/aws-cloud-engineering-release/Crowd-strike-anthos/falcon-sensor_5.38.0-10402_amd64.deb
+    mv falcon-sensor_5.38.0-10402_amd64.deb /root
     # We use chroot to run the following commands in the host root (mounted as the /root volume in the container)
-    chroot "${ROOT_MOUNT_DIR}" sudo dpkg -i crowdstrike.deb
-    chroot "${ROOT_MOUNT_DIR}" sudo /opt/CrowdStrike/falconctl -s --cid=<CID>
-    chroot "${ROOT_MOUNT_DIR}" sudo dpkg -i crowdstrike.deb
+    chroot "${ROOT_MOUNT_DIR}" sed -i 's!.*download.docker.com/linux/ubuntu bionic.*!#nuked#!g' /etc/apt/sources.list
+    chroot "${ROOT_MOUNT_DIR}" apt-get update -y
+    chroot "${ROOT_MOUNT_DIR}" apt-get upgrade -y
+    chroot "${ROOT_MOUNT_DIR}" dpkg -i /falcon-sensor_5.38.0-10402_amd64.deb
+    chroot "${ROOT_MOUNT_DIR}" /opt/CrowdStrike/falconctl -s --cid=123
     chroot "${ROOT_MOUNT_DIR}" systemctl start falcon-sensor
     chroot "${ROOT_MOUNT_DIR}" ps -e | grep falcon-sensor
