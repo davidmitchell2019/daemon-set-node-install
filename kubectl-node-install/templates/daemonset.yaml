@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: node-initializer
+  name: kubectl-node-install
   labels:
     app: default-init
 spec:
@@ -13,7 +13,7 @@ spec:
   template:
     metadata:
       labels:
-        name: node-initializer
+        name: kubectl-node-install
         app: default-init
     spec:
       volumes:
@@ -26,7 +26,7 @@ spec:
           defaultMode: 0744
       initContainers:
       - image: ubuntu:18.04
-        name: node-initializer
+        name: kubectl-node-install
         command: ["/scripts/entrypoint.sh"]
         env:
         - name: ROOT_MOUNT_DIR
