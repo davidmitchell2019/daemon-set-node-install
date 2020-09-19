@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: entrypoint
+  name: entrypoint-kubectl-node-install
   labels:
     app: default-init
 data:

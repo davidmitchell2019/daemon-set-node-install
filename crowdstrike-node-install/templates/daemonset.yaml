@@ -20,9 +20,9 @@ spec:
       - name: root-mount
         hostPath:
           path: /
-      - name: entrypoint
+      - name: entrypoint-crowdstrike-daemonset
         configMap:
-          name: entrypoint
+          name: entrypoint-crowdstrike-daemonset
           defaultMode: 0744
       initContainers:
       - image: ubuntu:18.04
@@ -36,7 +36,7 @@ spec:
         volumeMounts:
         - name: root-mount
           mountPath: /root
-        - name: entrypoint
+        - name: entrypoint-crowdstrike-daemonset
           mountPath: /scripts
       containers:
       - image: "gcr.io/google-containers/pause:2.0"
